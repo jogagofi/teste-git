@@ -1,0 +1,90 @@
+---
+Tratamento e limpeza de dados em R. tratar dados de tempo.csv
+AparÍncia: Sol, chuva,nublado
+Temperatura: -30F atÈ 130F
+Umidade: 0 a 100
+Jogar: Sim/N„o
+---
+Carregar o arquivo tempo.csv
+```{r}
+dados_tempo = read.csv('C:/Users/galdi/Documents/Curso Udemy/limpeza_R/dados/tempo.csv' ,sep = ";", na.strings="", stringsAsFactors=T)
+head(dados_tempo)
+summary(dados_tempo)
+```
+Explorar colunas categÛricas
+```{r}
+#Aparencia
+counts = table(dados_tempo$Aparencia)
+barplot(counts, main="Aparencia", xlab="Aparencia")
+#Vento
+counts = table(dados_tempo$Vento)
+barplot(counts, main="Vento", xlab="Vento")
+#Jogar
+counts = table(dados_tempo$Jogar )
+barplot(counts, main = "Jogar", xlab = "Jogar" )
+```
+Explorar colunas numÈricas
+```{r}
+#temperatura
+summary(dados_tempo$Temperatura )
+boxplot(dados_tempo$Temperatura, outline = F)
+hist(dados_tempo$Temperatura)
+#Umidade
+summary(dados_tempo$Umidade)
+boxplot(dados_tempo$Umidade)
+hist(dados_tempo$Umidade)
+
+```
+Valores faltantes NA
+```{r}
+#valores faltantes NAs
+dados_tempo[!complete.cases(dados_tempo),]
+```
+tratar a coluna Umidade (NA e valores fora do domÌnio)
+```{r}
+#tratar Umidade
+summary(dados_tempo$Umidade)
+#ver mediana
+median(dados_tempo$Umidade,na.rm = T)
+#atribuir mediana a NAs
+dados_tempo[is.na(dados_tempo$Umidade),]$Umidade = median(dados_tempo$Umidade,na.rm = T)
+#buscar NAS em Umidade para checar
+dados_tempo[!complete.cases(dados_tempo$Umidade),]
+#corrigir valores fora do domÌnio
+dados_tempo[dados_tempo$Umidade > 100 , ]$Umidade = median(dados_tempo$Umidade,na.rm = T)
+#verificar a correÁ„o
+summary(dados_tempo$Umidade)
+```
+tratar a coluna vento ( NA)
+```{r}
+summary(dados_tempo$Vento)
+#atribuir a moda ao NA
+dados_tempo[is.na(dados_tempo$Vento),]$Vento = "FALSO"
+```
+Tratar coluna temperatura
+```{r}
+summary(dados_tempo$Temperatura)
+dados_tempo[dados_tempo$Temperatura > 130, ]$Temperatura = median(dados_tempo$Temperatura)
+
+```
+tratar a coluna aparencia
+```{r}
+summary(dados_tempo$Aparencia)
+#Ver valores
+unique(dados_tempo$Aparencia)
+
+#tranformar MENOS EM Sol
+# menos em sol (moda)
+dados_tempo[dados_tempo$Aparencia == "menos", ]$Aparencia = "sol" 
+#ver resultado
+summary(dados_tempo$Aparencia)
+#remover levels n√£o utilizados
+dados_tempo$Aparencia =   factor(dados_tempo$Aparencia)
+#visualizar novamente
+summary(dados_tempo$Aparencia)
+```
+checar dados
+```{r}
+summary(dados_tempo)
+```
+
